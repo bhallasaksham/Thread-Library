@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #include "context.h"
-#include "preempt.h"
+// #include "preempt.h"
 #include "uthread.h"
 
 /* Size of the stack for a thread (in bytes) */
@@ -40,7 +40,7 @@ static void uthread_ctx_bootstrap(uthread_func_t func, void *arg)
 	/*
 	 * Enable interrupts right after being elected to run for the first time
 	 */
-	preempt_enable();
+	// preempt_enable();
 
 	/* Execute thread and when done, exit with the return value */
 	uthread_exit(func(arg));

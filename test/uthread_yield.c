@@ -17,30 +17,33 @@
 
 int thread3(void* arg)
 {
-	// uthread_yield();
-	// printf("thread%d\n", uthread_self());
+	// printf("here last\n");
+	uthread_yield();
+	printf("thread%d\n", uthread_self());
 	return 0;
 }
 
 int thread2(void* arg)
 {
-	// uthread_create(thread3, NULL);
-	// uthread_yield();
-	// printf("thread%d\n", uthread_self());
+	// printf("here second\n");
+	uthread_create(thread3, NULL);
+	uthread_yield();
+	printf("thread%d\n", uthread_self());
 	return 0;
 }
 
 int thread1(void* arg)
 {
-// 	uthread_create(thread2, NULL);
-// 	uthread_yield();
-// 	printf("thread%d\n", uthread_self());
-// 	uthread_yield();
+	// printf("here first\n");
+	uthread_create(thread2, NULL);
+	uthread_yield();
+	printf("thread%d\n", uthread_self());
+	uthread_yield();
 	return 0;
  }
 
 int main(void)
 {
-	// uthread_join(uthread_create(thread1, NULL), NULL);
+	uthread_join(uthread_create(thread1, NULL), NULL);
 	return 0;
 }

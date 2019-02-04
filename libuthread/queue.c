@@ -10,7 +10,7 @@
 // https://www.geeksforgeeks.org/generic-linked-list-in-c-2/
 // https://www.geeksforgeeks.org/linked-list-set-3-deleting-node/
 
-struct Node {
+struct Node { // change to static
 	void *data;
 	struct Node* next;
 };
@@ -46,7 +46,6 @@ int queue_destroy(queue_t queue)
 	if (queue->front == NULL) {
 		return -1;
 	}
-
 	/* Deallocating the memory associated to the queue object pointed by queue. */
 	free(queue);
 	return 0;
@@ -177,8 +176,12 @@ int queue_iterate(queue_t queue, queue_func_t func, void *arg, void **data)
 }
 
 int queue_length(queue_t queue)
-{
+{	
+	if (queue != NULL) {
+		return queue->sizeofQueue;
+	} else {
+		return 0;
+	}
 	
-	return queue->sizeofQueue;
 }
 
