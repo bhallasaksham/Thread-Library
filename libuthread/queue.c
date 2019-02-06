@@ -10,7 +10,7 @@
 // https://www.geeksforgeeks.org/generic-linked-list-in-c-2/
 // https://www.geeksforgeeks.org/linked-list-set-3-deleting-node/
 
-struct Node { // change to static
+struct Node { 
 	void *data;
 	struct Node* next;
 };

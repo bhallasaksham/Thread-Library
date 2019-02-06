@@ -17,7 +17,6 @@
 
 int thread3(void* arg)
 {
-	// printf("here last\n");
 	uthread_yield();
 	printf("thread%d\n", uthread_self());
 	return 0;
@@ -25,7 +24,6 @@ int thread3(void* arg)
 
 int thread2(void* arg)
 {
-	// printf("here second\n");
 	uthread_create(thread3, NULL);
 	uthread_yield();
 	printf("thread%d\n", uthread_self());
@@ -34,7 +32,6 @@ int thread2(void* arg)
 
 int thread1(void* arg)
 {
-	// printf("here first\n");
 	uthread_create(thread2, NULL);
 	uthread_yield();
 	printf("thread%d\n", uthread_self());
