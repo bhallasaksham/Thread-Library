@@ -81,6 +81,8 @@ TCB* uthread_init(uthread_t TID, int state, void* stack, uthread_ctx_t context) 
 
 void uthread_yield(void)
 {	
+	printf("in yield..\n");
+	preempt_disable();
 	int size = queue_length(global_queue);
 	if (size > 0) {
 		TCB* dequeued_element;
@@ -91,9 +93,9 @@ void uthread_yield(void)
 		temp = active_tcb;
 		active_tcb = dequeued_element;
 		active_tcb->state = 0;
+		preempt_enable();
 		uthread_ctx_switch(&temp->context, &dequeued_element->context);
-	}
-	
+	} 
 }
 
 uthread_t uthread_self(void)
@@ -133,9 +135,11 @@ int uthread_create(uthread_func_t func, void *arg)
 		if (global_queue == NULL) {
 			return -1;
 		}
-		queue_enqueue(global_queue, tcb);
+		queue_enqueue(global_queue, tcb);		
+		preempt_start();
 		return tcb->TID;
 	} else {
+		preempt_disable();
 		void* stack = uthread_ctx_alloc_stack();
 		if (stack == NULL) {
 			return -1;
@@ -151,6 +155,7 @@ int uthread_create(uthread_func_t func, void *arg)
 		}
 		thread_count = thread_count + 1;
 		queue_enqueue(global_queue, tcb);
+		preempt_enable();
 		return tcb->TID;
 	}
 	return 0;
@@ -158,6 +163,7 @@ int uthread_create(uthread_func_t func, void *arg)
 
 void uthread_exit(int retval)
 {
+	preempt_disable();
 	/* check if there is a process in blocked_queue waiting for this process to exit */
 	BLOCKED_TCB* blocked_tcb = NULL;
 	uthread_t *ptr = &active_tcb->TID;
@@ -184,22 +190,28 @@ void uthread_exit(int retval)
 		queue_dequeue(global_queue, (void**)&dequeued_element);
 		active_tcb = dequeued_element;
 		active_tcb->state = 0;
+		preempt_enable();
 		uthread_ctx_switch(&temp->context, &dequeued_element->context);
 	}
+	preempt_enable();
 }
 
 int uthread_join(uthread_t tid, int *retval)
 {
+	preempt_disable();
 	if (tid == 0) {
+		preempt_enable();
 		return -1;
 	}
 	if (tid == active_tcb->TID) {
+		preempt_enable();
 		return -1;
 	}
 	BLOCKED_TCB* tcb = NULL;
 	uthread_t *ptr = &tid;
 	queue_iterate(blocked_queue, find_item_in_blocked_queue, (void*)ptr, (void**)&tcb);
 	if (tcb != NULL) {
+		preempt_enable();
 		return -1;
 	}
 	TCB* found_tcb = NULL;
@@ -208,6 +220,7 @@ int uthread_join(uthread_t tid, int *retval)
 	if (found_tcb == NULL) {
 		queue_iterate(zombie_queue, find_item_in_zombie_queue, (void*)ptr, (void**)&exited_tcb);
 		if (exited_tcb == NULL) {
+			preempt_enable();
 			return -1;
 		}
 		if (retval == NULL) {
@@ -216,6 +229,7 @@ int uthread_join(uthread_t tid, int *retval)
 			*retval = active_tcb->retval;
 		}
 		queue_delete(zombie_queue, exited_tcb);
+		preempt_enable();
 		return 0;
 	}
 	BLOCKED_TCB* blocked_tcb = (BLOCKED_TCB*)malloc(sizeof(BLOCKED_TCB));
@@ -232,12 +246,14 @@ int uthread_join(uthread_t tid, int *retval)
 	queue_dequeue(global_queue, (void**)&dequeued_element);
 	active_tcb = dequeued_element;
 	active_tcb->state = 0;
+	preempt_enable();
 	uthread_ctx_switch(&temp->context, &dequeued_element->context);
 	if (retval == NULL) {
 		retval = &active_tcb->retval;
 	} else {
 		*retval = active_tcb->retval;
 	}
+
 	return 0;
 }
 

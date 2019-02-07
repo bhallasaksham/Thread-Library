@@ -37,7 +37,7 @@ int thread1(void* arg)
 	printf("thread%d\n", uthread_self());
 	uthread_yield();
 	return 0;
- }
+}
 
 int main(void)
 {
