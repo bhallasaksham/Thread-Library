@@ -161,10 +161,11 @@ int queue_delete(queue_t queue, void *data)
 
 int queue_iterate(queue_t queue, queue_func_t func, void *arg, void **data)
 {
+	/* If the queue doesn't exist or the function pointer points to nothing */
 	if (queue == NULL || func == NULL) {
 		return -1;
 	}
-
+	/*  */
 	for (struct Node* temp = queue->front; temp != NULL; temp = temp->next) {
 		int ret = func(temp->data, arg);
 		if (ret == 1 && data != NULL) {
