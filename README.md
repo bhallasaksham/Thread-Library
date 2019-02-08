@@ -81,11 +81,11 @@ but it was not very hard to learn. Enabling and disabling preemption required
 us to use sigprocmask and the provided documentation on that was very helpful.  
 
 ### Testing preemption
-WARNING: `test_preempt.c` has an infinite loop 
+WARNING: `test_preempt.c` has an infinite loop  
 In order to test preemption, we learned that the threads need to run for a  
 long time and we need to check if the threads yield to the next available  
 thread in the queue. In order to test that, we wrote a test that creates  
-3 different threads and all threads execute indefinitely. We see that the 
+3 different threads and all threads execute indefinitely. We see that the  
 threads automatically yield to the next available thread which confirms  
 that preemption works.  
 
