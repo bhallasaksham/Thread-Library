@@ -40,6 +40,7 @@ static int find_item(void *data, void *arg)
     return 0;
 }
 
+/* Callback function for struct Student */
 static int find_student(void *data, void *arg) {
 	Student* a = (Student*)data;
 	int match = (int)(long)arg;
@@ -56,6 +57,10 @@ void testForInts(queue_t my_queue) {
 	for (int i = 0; i < sizeof(data)/sizeof(data[0]); i++) {
 		queue_enqueue(my_queue, &data[i]);	
 	}
+
+	/* Queue is not empty, destroying queue should not be valid */
+	assert(queue_destroy(my_queue) == -1);
+
 	/* Check if 10 items were enqueued */
 	int size = queue_length(my_queue);
 	assert(size == 10);
@@ -81,6 +86,10 @@ void testForInts(queue_t my_queue) {
 	}
 	size = queue_length(my_queue);
 	assert(size == 0);
+
+	/* Check if queue successfully destroyed */
+	int ret = queue_destroy(my_queue);
+	assert(ret == 0);
 }
 
 void testForStructs(queue_t my_queue) {
@@ -93,6 +102,10 @@ void testForStructs(queue_t my_queue) {
 	queue_enqueue(my_queue, student1);
 	queue_enqueue(my_queue, student2);
 	queue_enqueue(my_queue, student3);
+
+
+	/* Queue is not empty, destroying queue should not be valid */
+	assert(queue_destroy(my_queue) == -1);
 
 	/* Check if 3 items were enqueued */
 	int size = queue_length(my_queue);
@@ -120,12 +133,36 @@ void testForStructs(queue_t my_queue) {
     assert(strcmp(ptr->name, "Michael") == 0);
 	size = queue_length(my_queue);
 	assert(size == 0);
+
+	/* Check if queue successfully destroyed */
+	int ret = queue_destroy(my_queue);
+	assert(ret == 0);
+}
+
+void testForEdgeCases(queue_t my_queue) {
+	/* Passing null should return -1 */
+	assert(queue_destroy(NULL) == -1);
+	assert(queue_enqueue(NULL, NULL) == -1);
+	assert(queue_dequeue(NULL, NULL) == -1);
+	assert(queue_delete(NULL, NULL) == -1);
+	assert(queue_iterate(NULL,NULL,NULL,NULL) == -1);
+	assert(queue_length(NULL) == -1);
+
+	/* Dequeuing/Deleting from the empty queue should not be possible */
+	assert(queue_dequeue(my_queue, NULL) == -1);
+	assert(queue_delete(my_queue, NULL) == -1);
+
+	/* Check if queue successfully destroyed */
+	int ret = queue_destroy(my_queue);
+	assert(ret == 0);
 }
 
 int main(void) {
 	queue_t my_queue;
 	my_queue = queue_create();
-	assert(queue_destroy(NULL) == -1);
+	testForEdgeCases(my_queue);
+	my_queue = queue_create();
 	testForInts(my_queue);
+	my_queue = queue_create();
 	testForStructs(my_queue);
 }

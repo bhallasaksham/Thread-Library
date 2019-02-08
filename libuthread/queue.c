@@ -26,11 +26,11 @@ queue_t queue_create(void)
 	/* will return NULL in case of failure, else returns the address of newly allocated memory */
 	my_queue = (queue_t)malloc(sizeof(queue_t));
 
-	/* initialize data in queue */
-	my_queue->front = my_queue->rear = NULL;
-	my_queue->sizeofQueue = 0;
-
-
+	if (my_queue != NULL) {
+		/* initialize data in queue */
+		my_queue->front = my_queue->rear = NULL;
+		my_queue->sizeofQueue = 0;		
+	}
 
 	/* returning pointer to the empty queue, NULL in case of failure */
 	return my_queue; 
@@ -43,7 +43,7 @@ int queue_destroy(queue_t queue)
 		return -1;
 	}
 
-	if (queue->front == NULL) {
+	if (queue->front != NULL) {
 		return -1;
 	}
 	/* Deallocating the memory associated to the queue object pointed by queue. */
@@ -161,27 +161,31 @@ int queue_delete(queue_t queue, void *data)
 
 int queue_iterate(queue_t queue, queue_func_t func, void *arg, void **data)
 {
-	/* If the queue doesn't exist or the function pointer points to nothing */
+	/* if queue doesnt exist or function pointer not set */
 	if (queue == NULL || func == NULL) {
 		return -1;
 	}
-	/*  */
+
+	/* iterate through the queue and call the function on each element in the queue */
 	for (struct Node* temp = queue->front; temp != NULL; temp = temp->next) {
 		int ret = func(temp->data, arg);
+		/* if function returns 1 and data needs to be set */
 		if (ret == 1 && data != NULL) {
 			*data = temp->data;
 			break;
 		}
 	}
+	/* Successfully iterated */
 	return 0;
 }
 
 int queue_length(queue_t queue)
 {	
+	/* returns the size of queue if queue exists, NULL otherwise */
 	if (queue != NULL) {
 		return queue->sizeofQueue;
 	} else {
-		return 0;
+		return -1;
 	}
 	
 }
