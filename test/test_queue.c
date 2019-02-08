@@ -64,15 +64,15 @@ void testForInts(queue_t my_queue) {
 	/* Check if 10 items were enqueued */
 	int size = queue_length(my_queue);
 	assert(size == 10);
-    /* Add value '1' to every item of the queue */
-    queue_iterate(my_queue, inc_item, (void*)1, NULL);
-    assert(data[0] == 2);
-    /* Check if ptr is set properly in iterate function */
-    int *ptr = NULL;
-    queue_iterate(my_queue, find_item, (void*)5, (void**)&ptr);
-    assert(ptr != NULL);
-    assert(*ptr == 5);
-    assert(ptr == &data[3]);
+	/* Add value '1' to every item of the queue */
+	queue_iterate(my_queue, inc_item, (void*)1, NULL);
+	assert(data[0] == 2);
+	/* Check if ptr is set properly in iterate function */
+	int *ptr = NULL;
+	queue_iterate(my_queue, find_item, (void*)5, (void**)&ptr);
+	assert(ptr != NULL);
+	assert(*ptr == 5);
+	assert(ptr == &data[3]);
 	/* Check if delete works, size of queue should be reduced to 9 */
 	queue_delete(my_queue,&data[2]);
 	size = queue_length(my_queue);
@@ -113,24 +113,24 @@ void testForStructs(queue_t my_queue) {
 
 	/* Check if ptr is set properly in iterate function */
 	Student *ptr = NULL;
-    queue_iterate(my_queue, find_student, (void*)1, (void**)&ptr);
-    assert(ptr != NULL);
-    assert(strcmp(ptr->name, "John") == 0);
+	queue_iterate(my_queue, find_student, (void*)1, (void**)&ptr);
+	assert(ptr != NULL);
+	assert(strcmp(ptr->name, "John") == 0);
 
-    /* Check if delete works, size of queue should be reduced to 2 */
+	/* Check if delete works, size of queue should be reduced to 2 */
 	queue_delete(my_queue, student2);
 	size = queue_length(my_queue);
 	assert(size == 2);
 
 	/* Check if ptr is being set correctly in dequeue */
 	queue_dequeue(my_queue, (void**)&ptr);
-    assert(strcmp(ptr->name, "John") == 0);
+	assert(strcmp(ptr->name, "John") == 0);
 	size = queue_length(my_queue);
 	assert(size == 1);
 
 	/* Check if size becomes zero at the end */
 	queue_dequeue(my_queue, (void**)&ptr);
-    assert(strcmp(ptr->name, "Michael") == 0);
+	assert(strcmp(ptr->name, "Michael") == 0);
 	size = queue_length(my_queue);
 	assert(size == 0);
 
