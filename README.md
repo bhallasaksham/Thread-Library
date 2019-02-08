@@ -1,5 +1,7 @@
-# ECS150 Project #1 Report
-### Project Partners: Saksham Bhalla and Jhilmil Malhotra
+# Project 2 - User-Level Thread Library
+## Project Partners
+Saksham Bhalla
+Jhilmil Malhotra
 
 ## INTRODUCTION
 
