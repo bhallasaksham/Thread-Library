@@ -29,8 +29,8 @@ assignment. Since it was a completely new process, it took us a long time
 to understand how threads work.  
 
 In order to implement the first function `uthread_create()`, we needed to  
-understand the context API and how to handle the main thread differently. 
-Since main thread was the currently running thread, we understood that we do 
+understand the context API and how to handle the main thread differently.  
+Since main thread was the currently running thread, we understood that we do  
 not need to allocate stack or initialize context for this thread. However, it  
 would be helpful to define a context object for main in order to save its  
 context when it yields to another thread. Once we understood that, we were  
