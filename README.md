@@ -19,7 +19,7 @@ the implementation was very straightforward.
 
 ### Testing the queue API
 
-To test whether our API is truly generic, we decided perform all queue  
+To test whether our API is truly generic, we decided to perform all queue  
 operations on 2 different data types. To make sure our queue handles  
 all the edge cases, we wrote a total of 29 tests.  
 
@@ -39,15 +39,15 @@ able to implement the`uthread_create()` method easily.
 The next step was to implement `uthread_yield()` function. To implement this,  
 we learned the round-robin method which says that the currently running thread  
 must yield control to the next available thread in the queue and should be  
-enqueued to the end of the queue. Our implementation was such that the  
-currently running thread is never present in the queue and the queue only  
-has threads which are waiting to be executed.  
+enqueued. Our implementation was such that the currently running thread is  
+never present in the queue and the queue only has threads which are waiting  
+to be executed.  
 
 The next step was to implement `uthread_exit()` function which simply   
 terminates the currently active thread and yields control to the next available  
-thread in the queue. The only different between yield at exit at this point is  
-that the exit function doesn't enqueue the currently active thread back on to   
-the queue. 
+thread in the queue. The only difference between yield at exit at this point is  
+that the exit function doesn't enqueue the currently active thread back in the  
+queue. 
 
 Finally, implementing `uthread_join()` function was very straightforward.  
 We had an infinite loop which terminates when there are no more jobs in the  
@@ -58,15 +58,15 @@ In order to test the uthread API, we used the 2 test cases provided to us
 and we were able to get the expected output.  
 
 ## PHASE 3 - Implementation of `uthread_join()`
-Once we understood how threads work, implementing `uthread_join()` was not   
-very hard. We learned that using one queue for everything might make the job   
-hard therefore we decided to use three different queues. We maintained a  
-ready queue for all ready threads, a zombie queue for all exited threads and  
+Once we understood how threads work, implementing `uthread_join()` was  
+relatively easier. We learned that using one queue for everything might make  
+the job hard therefore we decided to use three different queues. We maintained  
+a ready queue for all ready threads, a zombie queue for all exited threads and   
 a blocked queue for all blocked threads. The zombie queue stores the exited   
 thread's tcb and the return value whereas the blocked queue stores the blocked  
 thread's tcb as well as the TID of the thread because of which it is blocked.  
-Once we understood that, we just had to follow the instructions on the assignment   
-and the process of implementing this function was not that tough.  
+Once we understood that, we just had to follow the instructions on the  
+assignment.  
 
 ### Testing `uthread_join()` 
 In order to test joining, we wrote a new test script called `uthread_join`.  
@@ -81,7 +81,7 @@ but it was not very hard to learn. Enabling and disabling preemption required
 us to use sigprocmask and the provided documentation on that was very helpful.  
 
 ### Testing preemption
-WARNING: `test_preempt.c` has an infinite loop  
+WARNING: `test_preempt.c` has an infinite loop.  
 In order to test preemption, we learned that the threads need to run for a  
 long time and we need to check if the threads yield to the next available  
 thread in the queue. In order to test that, we wrote a test that creates  
@@ -96,3 +96,4 @@ https://pseudomuto.com/2013/05/implementing-a-generic-linked-list-in-c/
 https://www.geeksforgeeks.org/generic-linked-list-in-c-2/
 https://www.geeksforgeeks.org/linked-list-set-3-deleting-node/
 http://www.informit.com/articles/article.aspx?p=23618&seqNum=14
+https://www.gnu.org/software/libc/manual/html_mono/libc.html
