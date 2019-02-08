@@ -32,13 +32,13 @@ typedef struct {
 }BLOCKED_TCB;
 
 uthread_t thread_count = 0;
-queue_t global_queue;
+queue_t ready_queue;
 queue_t zombie_queue;
 queue_t blocked_queue;
 TCB* active_tcb;
 
-/* find item in global queue, callback function for queue_iterate */
-static int find_item_in_global_queue(void *data, void *arg) {
+/* find item in ready queue, callback function for queue_iterate */
+static int find_item_in_ready_queue(void *data, void *arg) {
     TCB *a = (TCB*)data;
     uthread_t *match = (uthread_t*)arg;
     if (a->TID == *match)
@@ -111,12 +111,12 @@ int create_first_thread(uthread_func_t func, void *arg) {
 	/* thread_count incremented every time new thread is created */
 	thread_count += 1;
 	/* create a new queue, this queue has all threads which are ready to execute */
-	global_queue = queue_create();
-	if (global_queue == NULL) {
+	ready_queue = queue_create();
+	if (ready_queue == NULL) {
 		return -1;
 	}
 	/* new thread created is ready for execution */
-	queue_enqueue(global_queue, tcb);	
+	queue_enqueue(ready_queue, tcb);	
 	/* return TID of new thread created */
 	return tcb->TID;
 }
@@ -141,7 +141,7 @@ int create_new_thread(uthread_func_t func, void *arg) {
 	/* thread_count incremented every time new thread is created */
 	thread_count += 1;
 	/* new thread created is ready for execution */
-	queue_enqueue(global_queue, tcb);
+	queue_enqueue(ready_queue, tcb);
 	/* return TID of new thread created */
 	return tcb->TID;
 }
@@ -155,9 +155,9 @@ void check_blocked_threads(int retval) {
 	queue_iterate(blocked_queue, find_item_in_blocked_queue, (void*)ptr, (void**)&blocked_tcb);
 	/* if TID is found in blocked queue, then a thread was waiting for the currently active thread to exit */
 	if (blocked_tcb != NULL) {
-		/* the blocked thread is now ready for execution, it is enqueued in global_queue and deleted from blocked_queue */
+		/* the blocked thread is now ready for execution, it is enqueued in ready_queue and deleted from blocked_queue */
 		blocked_tcb->tcb->retval = retval;
-		queue_enqueue(global_queue, blocked_tcb->tcb);
+		queue_enqueue(ready_queue, blocked_tcb->tcb);
 		queue_delete(blocked_queue, blocked_tcb);
 		thread_count += 1;
 	}
@@ -186,17 +186,17 @@ int check_in_blocked_queue(uthread_t tid) {
 	return 0;
 }
 
-/* check if thread with TID = tid is present in global queue or zombie queue */
-int check_in_global_queue(uthread_t tid, int *retval) {
+/* check if thread with TID = tid is present in ready queue or zombie queue */
+int check_in_ready_queue(uthread_t tid, int *retval) {
 	TCB* found_tcb = NULL;
 	uthread_t *ptr = &tid;
-	queue_iterate(global_queue, find_item_in_global_queue, (void*)ptr, (void**)&found_tcb);
-	/* if thread is not found in the global queue */
+	queue_iterate(ready_queue, find_item_in_ready_queue, (void*)ptr, (void**)&found_tcb);
+	/* if thread is not found in the ready queue */
 	if (found_tcb == NULL) {
 		/* check for thread in exited queue */
 		EXITED_TCB* exited_tcb = NULL;
 		queue_iterate(zombie_queue, find_item_in_zombie_queue, (void*)ptr, (void**)&exited_tcb);
-		/* if thread is not found in the exited  queue */
+		/* if thread is not found in the exited queue */
 		if (exited_tcb == NULL) {
 			return -1;
 		}
@@ -227,7 +227,7 @@ void add_to_blocked_queue(uthread_t tid, int *retval) {
 	TCB* dequeued_element = NULL;
 	TCB* temp = (TCB*)malloc(sizeof(TCB));
 	temp = blocked_tcb->tcb;
-	queue_dequeue(global_queue, (void**)&dequeued_element);
+	queue_dequeue(ready_queue, (void**)&dequeued_element);
 	active_tcb = dequeued_element;
 	preempt_enable();
 	uthread_ctx_switch(&temp->context, &dequeued_element->context);
@@ -244,15 +244,15 @@ void uthread_yield(void)
 {	
 	/* when changing global variables, disable preemption */
 	preempt_disable();
-	int size = queue_length(global_queue);
-	/* if there are threads in the global queue waiting for execution */
+	int size = queue_length(ready_queue);
+	/* if there are threads in the ready queue waiting for execution */
 	if (size > 0) {
 		/* dequeue element from front of the queue */
 		TCB* dequeued_element;
 		TCB* temp = (TCB*)malloc(sizeof(TCB));
-		queue_dequeue(global_queue, (void**)&dequeued_element);
+		queue_dequeue(ready_queue, (void**)&dequeued_element);
 		/* enqueue the currently running process at the end of the queue */
-		queue_enqueue(global_queue, active_tcb);
+		queue_enqueue(ready_queue, active_tcb);
 		temp = active_tcb;
 		active_tcb = dequeued_element;
 		/* no more changing global variables, preemption can resume */
@@ -305,14 +305,14 @@ void uthread_exit(int retval)
 	/* once a process exits, it is pushed into the exit queue where it waits to be collected by the parent */
 	add_to_exit_queue(retval);
 
-	/* check if more jobs are present in global_queue waiting to get executed */
-	int size = queue_length(global_queue);
+	/* check if more jobs are present in ready_queue waiting to get executed */
+	int size = queue_length(ready_queue);
 	if (size != 0) {
 		/* if a thread exits, a new thread is dequeued from the queue of ready threads and it becomes the active process */
 		TCB* dequeued_element = NULL;
 		TCB* temp = (TCB*)malloc(sizeof(TCB));
 		temp = active_tcb;
-		queue_dequeue(global_queue, (void**)&dequeued_element);
+		queue_dequeue(ready_queue, (void**)&dequeued_element);
 		active_tcb = dequeued_element;
 		preempt_enable();
 		uthread_ctx_switch(&temp->context, &dequeued_element->context);
@@ -337,8 +337,8 @@ int uthread_join(uthread_t tid, int *retval)
 		return -1;
 	}
 
-	/* check if thread to join is in global_queue or zombie_queue */
-	ret = check_in_global_queue(tid,retval);
+	/* check if thread to join is in ready_queue or zombie_queue */
+	ret = check_in_ready_queue(tid,retval);
 	if (ret == -1) {
 		return -1;
 	}

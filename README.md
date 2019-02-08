@@ -39,9 +39,9 @@ able to implement the`uthread_create()` method easily.
 The next step was to implement `uthread_yield()` function. To implement this,  
 we learned the round-robin method which says that the currently running thread  
 must yield control to the next available thread in the queue and should be  
-enqueued to the end of the queue. Our implementation was such that the currently  
-running thread is never present in the queue and the queue only has threads  
-which are waiting to be executed.  
+enqueued to the end of the queue. Our implementation was such that the  
+currently running thread is never present in the queue and the queue only  
+has threads which are waiting to be executed.  
 
 The next step was to implement `uthread_exit()` function which simply   
 terminates the currently active thread and yields control to the next available  
@@ -58,10 +58,36 @@ In order to test the uthread API, we used the 2 test cases provided to us
 and we were able to get the expected output.  
 
 ## PHASE 3 - Implementation of `uthread_join()`
+Once we understood how threads work, implementing `uthread_join()` was not   
+very hard. We learned that using one queue for everything might make the job   
+hard therefore we decided to use three different queues. We maintained a  
+ready queue for all ready threads, a zombie queue for all exited threads and  
+a blocked queue for all blocked threads. The zombie queue stores the exited   
+thread's tcb and the return value whereas the blocked queue stores the blocked  
+thread's tcb as well as the TID of the thread because of which it is blocked.  
+Once we understood that, we just had to follow the instructions on the assignment   
+and the process of implementing this function was not that tough.  
 
+### Testing `uthread_join()` 
+In order to test joining, we wrote a new test script called `uthread_join`.  
+This testing script tests whether the parent threads properly wait for the   
+child threads. It also checks if the return value is properly collected from   
+the child.  
 
-## PHASE 4
+## PHASE 4 - Implementation of preemption
+To implement preemption, we had to configure a signal handler and a timer.  
+Implementing those required us to carefully go over the GNU documentation  
+but it was not very hard to learn. Enabling and disabling preemption required  
+us to use sigprocmask and the provided documentation on that was very helpful.  
 
+### Testing preemption
+WARNING: `test_preempt.c` has an infinite loop 
+In order to test preemption, we learned that the threads need to run for a  
+long time and we need to check if the threads yield to the next available  
+thread in the queue. In order to test that, we wrote a test that creates  
+3 different threads and all threads execute indefinitely. We see that the 
+threads automatically yield to the next available thread which confirms  
+that preemption works.  
 
 ## CITATIONS 
 
