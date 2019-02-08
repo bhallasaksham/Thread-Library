@@ -9,12 +9,12 @@ to the API standards. It was also helpful to learn how to write tests after
 API implementation. 
 
 ## PHASE 1 - Implementation of the queue API
-To implement a generic API for the queue, it must be able to support 
-any data type. In order to make most of the operations O(1), we decided 
+To implement a generic API for the queue, it must be able to support  
+any data type. In order to make most of the operations `O(1)`, we decided  
 to implement our queue as a linked list. Each node in the linked list 
-contains a void* data and a pointer to the next node. The queue data
+contains a `void* data` and a pointer to the next node. The queue data 
 structure consists of front and rear pointers for the queue and a 
-Node object for each node. Once we chose the right data structures, 
+Node object for each node. Once we chose the right data structures,  
 the implementation was very straightforward. 
 
 ### Testing the queue API
