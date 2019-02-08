@@ -2,13 +2,13 @@
 ## Project Partners
 Saksham Bhalla and Jhilmil Malhotra
 
-## INTRODUCTION
+## Introduction
 This project helped us understand how threads work, and also how to write  
 tests for our code. One of the great challenges in this project was to conform  
 to the API standards. It was also helpful to learn how to write tests after  
 API implementation.  
 
-## PHASE 1 - Implementation of the queue API
+## Phase 1 - Implementation of the queue API
 To implement a generic API for the queue, it must be able to support  
 any data type. In order to make most of the operations `O(1)`, we decided  
 to implement our queue as a linked list. Each node in the linked list  
@@ -23,7 +23,7 @@ To test whether our API is truly generic, we decided to perform all queue
 operations on 2 different data types. To make sure our queue handles  
 all the edge cases, we wrote a total of 29 tests.  
 
-## PHASE 2 - Implementation of the uthread API
+## Phase 2 - Implementation of the uthread API
 Implementing the uthread library was the most challenging part of this  
 assignment. Since it was a completely new process, it took us a long time  
 to understand how threads work.  
@@ -57,7 +57,7 @@ queue. Otherwise we just simply yield to the next thread in the queue.
 In order to test the uthread API, we used the 2 test cases provided to us  
 and we were able to get the expected output.  
 
-## PHASE 3 - Implementation of `uthread_join()`
+## Phase 3 - Implementation of `uthread_join()`
 Once we understood how threads work, implementing `uthread_join()` was  
 relatively easier. We learned that using one queue for everything might make  
 the job hard therefore we decided to use three different queues. We maintained  
@@ -74,7 +74,7 @@ This testing script tests whether the parent threads properly wait for the
 child threads. It also checks if the return value is properly collected from   
 the child.  
 
-## PHASE 4 - Implementation of preemption
+## Phase 4 - Implementation of preemption
 To implement preemption, we had to configure a signal handler and a timer.  
 Implementing those required us to carefully go over the GNU documentation  
 but it was not very hard to learn. Enabling and disabling preemption required  
@@ -89,7 +89,7 @@ thread in the queue. In order to test that, we wrote a test that creates
 threads automatically yield to the next available thread which confirms  
 that preemption works.  
 
-## CITATIONS 
+## Citations 
 
 https://www.geeksforgeeks.org/queue-set-2-linked-list-implementation/  
 https://pseudomuto.com/2013/05/implementing-a-generic-linked-list-in-c/  
