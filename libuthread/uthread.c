@@ -83,7 +83,6 @@ int create_first_thread(uthread_func_t func, void *arg) {
 	if (main_context == NULL) {
 		return -1;
 	}
-	
 	/* allocate space for the new thread */
 	uthread_ctx_t next_thread_context;
 
