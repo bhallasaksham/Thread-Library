@@ -91,9 +91,9 @@ that preemption works.
 
 ## CITATIONS 
 
-https://www.geeksforgeeks.org/queue-set-2-linked-list-implementation/ 
-https://pseudomuto.com/2013/05/implementing-a-generic-linked-list-in-c/
-https://www.geeksforgeeks.org/generic-linked-list-in-c-2/
-https://www.geeksforgeeks.org/linked-list-set-3-deleting-node/
-http://www.informit.com/articles/article.aspx?p=23618&seqNum=14
-https://www.gnu.org/software/libc/manual/html_mono/libc.html
+https://www.geeksforgeeks.org/queue-set-2-linked-list-implementation/  
+https://pseudomuto.com/2013/05/implementing-a-generic-linked-list-in-c/  
+https://www.geeksforgeeks.org/generic-linked-list-in-c-2/  
+https://www.geeksforgeeks.org/linked-list-set-3-deleting-node/  
+http://www.informit.com/articles/article.aspx?p=23618&seqNum=14  
+https://www.gnu.org/software/libc/manual/html_mono/libc.html  
