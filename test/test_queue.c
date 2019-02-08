@@ -165,4 +165,5 @@ int main(void) {
 	testForInts(my_queue);
 	my_queue = queue_create();
 	testForStructs(my_queue);
+	printf("All test cases passed!\n");
 }
